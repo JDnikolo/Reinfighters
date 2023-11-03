@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Health : MonoBehaviour
@@ -26,6 +27,6 @@ public class Health : MonoBehaviour
         }
     }
     void Die(){
-        Destroy(gameObject);
+        FindObjectOfType<MatchManager>().RoundEnd(gameObject);
     }
 }

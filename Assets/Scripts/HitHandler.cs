@@ -12,11 +12,13 @@ public class HitHandler : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other) {
         if(other==transform.parent.parent.GetComponent<Collider2D>()) return;
+        
         if (other.CompareTag("Player")){
+            if (swingPathfinder.GetCurrentAction()==(int)Actions.parry) return;
+            other.GetComponentInChildren<SwingPathfinder>().CancelCurrentSwing();
             other.GetComponent<Health>().TakeDamage();
             other.GetComponent<CombatantController>()
                 .HitKnockback(swingPathfinder.GetCurrentAction());
-            other.GetComponentInChildren<SwingPathfinder>().CancelCurrentSwing();
         }
         else if(other.CompareTag("Weapon")){
             HandleWeaponCollision(other);
@@ -25,7 +27,6 @@ public class HitHandler : MonoBehaviour
 
     private void HandleWeaponCollision(Collider2D other)
     {
-        Debug.Log(swingPathfinder.GetCurrentAction()+" "+other.GetComponent<SwingPathfinder>().GetCurrentAction());
         Actions actionSelf,actionOther;
         actionSelf=(Actions)swingPathfinder.GetCurrentAction();
         actionOther=(Actions)other.GetComponent<SwingPathfinder>().GetCurrentAction();
@@ -34,7 +35,7 @@ public class HitHandler : MonoBehaviour
         }
         else if(actionSelf==Actions.lunge && actionOther==Actions.parry){
             swingPathfinder.CancelCurrentSwing();
-            transform.parent.parent.GetComponent<CombatantController>().HitKnockback(0);
+            transform.parent.parent.GetComponent<CombatantController>().HitKnockback((int)Actions.parry);
         }
     }
 

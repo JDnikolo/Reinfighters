@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ba32a7dc94ccf846b04ad37ec559ae9, type: 3}
+  m_Name: VictorySwing
+  m_EditorClassIdentifier: 
+  swingPrefab: {fileID: 3928301288944710064, guid: d60ac4a60cf3d1d46b7d21afcde0268c, type: 3}
+  moveSpeed: 5
+  rotationSpeed: 2
+  windUpDelay: 0
+  remainActiveDelay: 0
+  followThroughDelay: 1

@@ -19,10 +19,12 @@ public class CombatantController : MonoBehaviour
     enum Actions {attack, lunge, parry}
     readonly int parry = (int)Actions.parry;
     readonly int attack = (int)Actions.attack;
-    readonly int lunge = (int)Actions.lunge;    
+    readonly int lunge = (int)Actions.lunge;
+    Health myHealth;    
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        myHealth = GetComponent<Health>();
         swingPathfinder = GetComponentInChildren<SwingPathfinder>();
         myRigidBody = GetComponent<Rigidbody2D>();
     }
@@ -30,7 +32,7 @@ public class CombatantController : MonoBehaviour
     void Update()
     {
         canAct = swingPathfinder.GetCurrentSwingCoroutine() == null;
-        if(canAct&& !isStunned){
+        if(canAct && !isStunned){
             Move();
         }
     }
@@ -44,19 +46,19 @@ public class CombatantController : MonoBehaviour
     }
 
     protected void OnAttack(){
-        if (canAct&& !isStunned){
+        if (canAct && !isStunned){
         swingPathfinder.Swing(attack);
         canAct=false;
         }
     }
     protected void OnLunge(){
-        if (canAct&& !isStunned){
+        if (canAct && !isStunned){
         swingPathfinder.Swing(lunge);
         canAct=false;
         }
     }
     protected void OnParry(){
-        if (canAct&& !isStunned){
+        if (canAct && !isStunned){
         swingPathfinder.Swing(parry);
         canAct=false;
         }
@@ -65,19 +67,37 @@ public class CombatantController : MonoBehaviour
     public void HitKnockback(int intensity=0)
     {
         Vector2 knockback=new();
-        if (intensity==(int)Actions.attack){
+        if (intensity==attack){
             knockback=attackKnockbackAmount;
             StartCoroutine(HitStun(attack));
         }
-        else if (intensity==(int)Actions.lunge){
+        else if (intensity==lunge){
             knockback=lungeKnockbackAmount;
             StartCoroutine(HitStun(lunge));
+        }
+        else if (intensity==parry){
+            knockback=lungeKnockbackAmount;
+            StartCoroutine(HitStun(parry));
         }
         myRigidBody.velocity=new Vector2(-knockback.x*transform.localScale.x,knockback.y);
     }
     protected IEnumerator HitStun(int action){
         isStunned=true;
         yield return new WaitForSeconds(action);
-        isStunned=false;
+        if (myHealth.GetHealth()>0) isStunned=false;
+    }
+    public void SetStun(bool value){
+        isStunned=value;
+    }
+
+    public void RoundStartSwing(){
+        swingPathfinder.RoundStartSwing();
+    }
+    public void VictorySwing(){
+        swingPathfinder.VictorySwing();
+    }
+    public void DeathSwing(){
+        
+        swingPathfinder.DeathSwing();
     }
 }

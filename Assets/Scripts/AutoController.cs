@@ -22,16 +22,18 @@ public class AutoController : CombatantController
     void Update()
     {
         canAct = swingPathfinder.GetCurrentSwingCoroutine() == null;
-        if (!canAct) return;
-        int action = Random.Range(0,200);
-        switch (action){
-            case 0: {OnAttack(); break;}
-            case 1: {OnLunge();break;}
-            case 2: {OnParry();break;}
-            default:{
-                rawMovement = ((!player.IsDestroyed()?player.transform.position:transform.position)-transform.position).normalized;
-                Move();
-                break;
+        if (canAct && !isStunned)
+        {   
+            int action = Random.Range(0,200);
+            switch (action){
+                case 0: {OnAttack(); break;}
+                case 1: {OnLunge();break;}
+                case 2: {OnParry();break;}
+                default:{
+                    rawMovement = ((!player.IsDestroyed()?player.transform.position:transform.position)-transform.position).normalized;
+                    Move();
+                    break;
+                }
             }
         }
     }

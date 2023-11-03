@@ -6,7 +6,8 @@ using UnityEngine;
 public class SwingPathfinder : MonoBehaviour
 {
     
-    [SerializeField] SwordSwingSO[] swordSwings = new SwordSwingSO[3];
+    [SerializeField] SwordSwingSO[] swordSwings = new SwordSwingSO[6];
+    readonly int roundStartSwingIndex = 3, victorySwingIndex=4, deathSwingIndex=5;
     BoxCollider2D myBoxCollider;
     SwordSwingSO swordSwing = null;
     [SerializeField] Transform returnPoint;
@@ -28,15 +29,15 @@ public class SwingPathfinder : MonoBehaviour
         return currentSwingCoroutine;
     }
 
-    public void Swing(int swingIndex){
+    public void Swing(int swingIndex,bool enableHurtBox=true){
         if (currentSwingCoroutine!=null) return;
         currentAction = (Actions)swingIndex;
         swordSwing = swordSwings[swingIndex];
         transforms=swordSwing.GetTransforms();
-        currentSwingCoroutine=StartCoroutine(MoveAndRotateSword());
+        currentSwingCoroutine=StartCoroutine(MoveAndRotateSword(enableHurtBox));
     }
 
-    IEnumerator MoveAndRotateSword(){
+    IEnumerator MoveAndRotateSword(bool enableHurtBox=true){
         while (transformIndex<transforms.Count){
             Vector3 targetPosition = transforms[transformIndex].localPosition;
             Quaternion targetRotation = transforms[transformIndex].localRotation;
@@ -45,7 +46,7 @@ public class SwingPathfinder : MonoBehaviour
             transform.SetLocalPositionAndRotation(Vector2.MoveTowards(
                 transform.localPosition,
                 targetPosition,
-                positionDelta), Quaternion.Lerp(
+                positionDelta), Quaternion.Slerp(
                 transform.localRotation,
                 targetRotation,
                 rotationDelta
@@ -53,7 +54,7 @@ public class SwingPathfinder : MonoBehaviour
             if (transform.localPosition==targetPosition){
                 if (transformIndex==0) {
                     yield return new WaitForSeconds(swordSwing.GetWindUpDelay());
-                    myBoxCollider.enabled=true;}
+                    myBoxCollider.enabled=enableHurtBox;}
                 transformIndex++;
             }
             yield return new WaitForNextFrameUnit();   
@@ -87,5 +88,27 @@ public class SwingPathfinder : MonoBehaviour
         transformIndex=0;
         myBoxCollider.enabled=false;
         currentSwingCoroutine=StartCoroutine(ReturnToStarting());
+    }
+
+    public void RoundStartSwing(){
+        Swing(roundStartSwingIndex,enableHurtBox:false);
+    }
+    public void VictorySwing(){
+        if (currentSwingCoroutine!=null) {
+            StopCoroutine(currentSwingCoroutine);
+            currentSwingCoroutine=null;
+        }
+        transformIndex=0;
+        myBoxCollider.enabled=false;
+        Swing(victorySwingIndex,enableHurtBox:false);
+    }
+    public void DeathSwing(){
+        if (currentSwingCoroutine!=null) {
+            StopCoroutine(currentSwingCoroutine);
+            currentSwingCoroutine=null;
+        }
+        transformIndex=0;
+        myBoxCollider.enabled=false;
+        Swing(deathSwingIndex,enableHurtBox:false);
     }
 }
