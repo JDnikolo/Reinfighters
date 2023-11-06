@@ -21,6 +21,7 @@ public class CombatantController : MonoBehaviour
     readonly int attack = (int)Actions.attack;
     readonly int lunge = (int)Actions.lunge;
     Health myHealth;    
+    [SerializeField] float[] hitStunDurations = {1,2,2};
     // Start is called before the first frame update
     void Awake()
     {
@@ -38,11 +39,13 @@ public class CombatantController : MonoBehaviour
     }
 
     protected void Move(){
-        transform.position+=moveSpeed * Time.deltaTime * (Vector3)rawMovement;
+        if (canAct && !isStunned){
+            transform.position += moveSpeed * Time.deltaTime * (Vector3)rawMovement;
+        }
     }
 
     void OnMove(InputValue value){
-        rawMovement = new Vector2(value.Get<Vector2>().x,0);
+        rawMovement = new Vector2(value.Get<Vector2>().x,0);  
     }
 
     protected void OnAttack(){
@@ -63,6 +66,9 @@ public class CombatantController : MonoBehaviour
         canAct=false;
         }
     }
+    void OnEscape(){
+        FindObjectOfType<LevelManager>().Escape();
+    }
 
     public void HitKnockback(int intensity=0)
     {
@@ -76,27 +82,28 @@ public class CombatantController : MonoBehaviour
             StartCoroutine(HitStun(lunge));
         }
         else if (intensity==parry){
-            knockback=lungeKnockbackAmount;
+            knockback=attackKnockbackAmount;
             StartCoroutine(HitStun(parry));
         }
         myRigidBody.velocity=new Vector2(-knockback.x*transform.localScale.x,knockback.y);
     }
     protected IEnumerator HitStun(int action){
         isStunned=true;
-        yield return new WaitForSeconds(action);
+        yield return new WaitForSeconds(hitStunDurations[action]);
         if (myHealth.GetHealth()>0) isStunned=false;
+        myRigidBody.velocity=new();
     }
     public void SetStun(bool value){
         isStunned=value;
     }
 
-    public void RoundStartSwing(){
+    public void StartRoundStartSwing(){
         swingPathfinder.RoundStartSwing();
     }
-    public void VictorySwing(){
+    public void StartVictorySwing(){
         swingPathfinder.VictorySwing();
     }
-    public void DeathSwing(){
+    public void StartDeathSwing(){
         
         swingPathfinder.DeathSwing();
     }

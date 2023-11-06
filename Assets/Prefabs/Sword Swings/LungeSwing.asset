@@ -16,5 +16,5 @@ MonoBehaviour:
   moveSpeed: 30
   rotationSpeed: 25
   windUpDelay: 0.2
-  remainActiveDelay: 0.1
-  followThroughDelay: 0.4
+  remainActiveDelay: 0.05
+  followThroughDelay: 0.7

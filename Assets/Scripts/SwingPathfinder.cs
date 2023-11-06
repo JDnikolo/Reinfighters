@@ -84,9 +84,9 @@ public class SwingPathfinder : MonoBehaviour
     }
     public void CancelCurrentSwing(){
         if (currentSwingCoroutine==null) return;
+        myBoxCollider.enabled=false;
         StopCoroutine(currentSwingCoroutine);
         transformIndex=0;
-        myBoxCollider.enabled=false;
         currentSwingCoroutine=StartCoroutine(ReturnToStarting());
     }
 

@@ -7,17 +7,17 @@ using UnityEngine.Scripting.APIUpdating;
 
 public class AutoController : CombatantController
 {
-    CombatantController player;
+    CombatantController opponent;
+    int movementDirection=1;
 
     void Start(){
-        CombatantController[] players = FindObjectsOfType<CombatantController>();
-        foreach(CombatantController controller in players){
-            if (controller.gameObject.transform!=transform){
-                player = controller;
-            }
-        }
+        movementDirection=1;
         swingPathfinder = GetComponentInChildren<SwingPathfinder>();
         myRigidBody = GetComponent<Rigidbody2D>();
+        StartCoroutine(RandomMoveDirectionChange());
+    }
+    public void SetOpponent(CombatantController targetOpponent){
+        opponent = targetOpponent;
     }
     void Update()
     {
@@ -30,11 +30,23 @@ public class AutoController : CombatantController
                 case 1: {OnLunge();break;}
                 case 2: {OnParry();break;}
                 default:{
-                    rawMovement = ((!player.IsDestroyed()?player.transform.position:transform.position)-transform.position).normalized;
+                    rawMovement = ((!opponent.IsDestroyed()?opponent.transform.position:transform.position)-transform.position).normalized*movementDirection;
+                    Debug.Log(rawMovement+" "+movementDirection);
                     Move();
                     break;
                 }
             }
         }
     }
+    IEnumerator RandomMoveDirectionChange(){
+        while (true){
+            yield return new WaitForSeconds(Random.Range(0.25f,1.5f));
+            movementDirection*=-1;
+        }
+    }
+
+    private void OnDestroy() {
+        StopCoroutine(RandomMoveDirectionChange());    
+    }
+
 }

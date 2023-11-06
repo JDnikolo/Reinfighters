@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Attack Swing
   m_EditorClassIdentifier: 
   swingPrefab: {fileID: 4228265131700453873, guid: 0f2cd9cb9db12544082370aff887aa2b, type: 3}
-  moveSpeed: 20
+  moveSpeed: 30
   rotationSpeed: 20
   windUpDelay: 0
-  followThroughDelay: 0.2
+  remainActiveDelay: 0
+  followThroughDelay: 0.4

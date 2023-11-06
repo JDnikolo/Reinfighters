@@ -49,9 +49,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0731f8976fa17244c82ac3a5c4872495, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 10
+  moveSpeed: 5
   attackKnockbackAmount: {x: 5, y: 4}
   lungeKnockbackAmount: {x: 8, y: 4}
+  hitStunDurations:
+  - 0.5
+  - 1
+  - 1.5
 --- !u!50 &6231491786895288316
 Rigidbody2D:
   serializedVersion: 4

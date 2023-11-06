@@ -32,8 +32,10 @@ public class HitHandler : MonoBehaviour
         actionOther=(Actions)other.GetComponent<SwingPathfinder>().GetCurrentAction();
         if (actionSelf==Actions.parry && actionOther==Actions.lunge){
             swingPathfinder.CancelCurrentSwing();
+
         }
         else if(actionSelf==Actions.lunge && actionOther==Actions.parry){
+            
             swingPathfinder.CancelCurrentSwing();
             transform.parent.parent.GetComponent<CombatantController>().HitKnockback((int)Actions.parry);
         }
